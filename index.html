@@ -204,6 +204,28 @@
       </div>
       <div class="news-arrow">›</div>
     </div>
+
+    <div class="news-card" style="background:linear-gradient(135deg,#1a0d0a,#2e1a10)" onclick="snd('open');openInfo('mine')">
+      <div class="news-card-icon" style="background:linear-gradient(135deg,#5c2d0a,#3d1e06)">⛏️</div>
+      <div class="news-card-body">
+        <span class="news-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;border:1px solid rgba(251,146,60,0.3)" data-i18n="tag-game">🎮 ИГРА</span>
+        <div class="news-title">Mine-html — добывай ресурсы!</div>
+        <div class="news-desc">Браузерная майнинг-игра. Копай, добывай, развивайся.</div>
+        <div class="news-date">14 июля 2026</div>
+      </div>
+      <div class="news-arrow">›</div>
+    </div>
+
+    <div class="news-card" style="background:linear-gradient(135deg,#0a101a,#0d162e)" onclick="snd('open');openInfo('check')">
+      <div class="news-card-icon" style="background:linear-gradient(135deg,#0a2a5c,#0d1e4e)">✅</div>
+      <div class="news-card-body">
+        <span class="news-tag" style="background:rgba(22,163,74,0.2);color:#4ade80;border:1px solid rgba(22,163,74,0.3)" data-i18n="tag-game">🎮 ИГРА</span>
+        <div class="news-title">Check-app — проверь свои знания!</div>
+        <div class="news-desc">Увлекательная игра-проверка. Отвечай на вопросы и набирай очки.</div>
+        <div class="news-date">14 июля 2026</div>
+      </div>
+      <div class="news-arrow">›</div>
+    </div>
   </div>
 
   <!-- GAMES -->
@@ -217,6 +239,24 @@
         <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
       </div>
       <button class="dl-btn" onclick="snd('download');openLaunch('diamond')" data-i18n="btn-dl">Скачать</button>
+    </div>
+    <div class="app-item">
+      <div class="app-icon" style="background:linear-gradient(135deg,#5c2d0a,#3d1e06);cursor:pointer" onclick="snd('open');openInfo('mine')">⛏️</div>
+      <div class="app-info" onclick="snd('open');openInfo('mine')">
+        <div class="app-name">Mine-html</div>
+        <div class="app-desc">Добывай ресурсы, строй шахту!</div>
+        <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
+      </div>
+      <button class="dl-btn" onclick="snd('download');openLaunch('mine')" data-i18n="btn-dl">Скачать</button>
+    </div>
+    <div class="app-item">
+      <div class="app-icon" style="background:linear-gradient(135deg,#0a2a5c,#0d1e4e);cursor:pointer" onclick="snd('open');openInfo('check')">✅</div>
+      <div class="app-info" onclick="snd('open');openInfo('check')">
+        <div class="app-name">Check-app</div>
+        <div class="app-desc">Проверь свои знания и рефлексы!</div>
+        <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
+      </div>
+      <button class="dl-btn" onclick="snd('download');openLaunch('check')" data-i18n="btn-dl">Скачать</button>
     </div>
   </div>
 
@@ -326,6 +366,26 @@
     <div class="modal-sub" data-i18n="launch-app-sub">Приложение готово к работе!<br>Нажми кнопку, чтобы открыть.</div>
     <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/Shop/','_blank');closeLaunch('shop')" data-i18n="btn-use">▶ Пользоваться</button>
     <button class="modal-cancel" onclick="snd('click');closeLaunch('shop')" data-i18n="btn-cancel">Отмена</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="launch-mine">
+  <div class="modal">
+    <div class="modal-icon">⛏️</div>
+    <div class="modal-title">Mine-html</div>
+    <div class="modal-sub" data-i18n="launch-game-sub">Игра готова к запуску!<br>Нажми кнопку, чтобы перейти.</div>
+    <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/Mine-html/','_blank');closeLaunch('mine')" data-i18n="btn-play">▶ Играть</button>
+    <button class="modal-cancel" onclick="snd('click');closeLaunch('mine')" data-i18n="btn-cancel">Отмена</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="launch-check">
+  <div class="modal">
+    <div class="modal-icon">✅</div>
+    <div class="modal-title">Check-app</div>
+    <div class="modal-sub" data-i18n="launch-game-sub">Игра готова к запуску!<br>Нажми кнопку, чтобы перейти.</div>
+    <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/Check-app/','_blank');closeLaunch('check')" data-i18n="btn-play">▶ Играть</button>
+    <button class="modal-cancel" onclick="snd('click');closeLaunch('check')" data-i18n="btn-cancel">Отмена</button>
   </div>
 </div>
 
@@ -744,6 +804,24 @@ const appData = {
     whatsnew:'Версия от 13 июля 2026: новые категории товаров, улучшен поиск, исправлены ошибки на мобильных.',
     devinfo:'Ruslan1055 — разработчик игр и веб-приложений. Clicker Shop — единая точка входа для покупок в экосистеме кликеров.',
     launchId:'shop'
+  },
+  mine: {
+    icon:'⛏️', iconBg:'linear-gradient(135deg,#5c2d0a,#3d1e06)',
+    name:'Mine-html', dev:'Ruslan1055', age:'6+',
+    about:'Mine-html — браузерная игра о добыче ресурсов. Управляй шахтёром, копай глубже, открывай новые пласты руды и редкие минералы. Прокачивай инструменты, нанимай помощников и стань владельцем самой богатой шахты. Работает прямо в браузере без установки.',
+    tags:['Майнинг','Ресурсы','Онлайн','Стратегия','Прокачка','Бесплатно'],
+    whatsnew:'Версия от 14 июля 2026: добавлены новые уровни шахты, редкие минералы, улучшена графика и производительность.',
+    devinfo:'Ruslan1055 — независимый разработчик браузерных игр. Mine-html создан как увлекательная idle-игра для всех возрастов.',
+    launchId:'mine'
+  },
+  check: {
+    icon:'✅', iconBg:'linear-gradient(135deg,#0a2a5c,#0d1e4e)',
+    name:'Check-app', dev:'Ruslan1055', age:'6+',
+    about:'Check-app — динамичная игра на проверку знаний и реакции. Отвечай на вопросы, набирай очки и бей рекорды. Разные категории вопросов, несколько режимов сложности и таблица лидеров. Идеально для тренировки памяти и быстрого мышления.',
+    tags:['Викторина','Знания','Онлайн','Рефлексы','Рекорды','Бесплатно'],
+    whatsnew:'Версия от 14 июля 2026: новые категории вопросов, добавлен режим на время, исправлены ошибки подсчёта очков.',
+    devinfo:'Ruslan1055 — создаёт образовательные и развлекательные веб-приложения. Check-app — весело и полезно одновременно.',
+    launchId:'check'
   }
 };
 
