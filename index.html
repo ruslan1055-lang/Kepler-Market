@@ -1,793 +1,196 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kepler Market</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a14; color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: background 0.3s, color 0.3s; }
-  body.light { background: #f0f0f8; color: #111; }
-  body.light .topbar { background: #fff; border-bottom: 1px solid #e0e0f0; }
-  body.light .search-bar { background: #f0f0f8; border-color: #d0d0e8; }
-  body.light .search-bar input { color: #111; }
-  body.light .news-card { background: #fff !important; border-color: #e0e0f0; }
-  body.light .news-title { color: #111; }
-  body.light .news-desc { color: #777; }
-  body.light .settings-section { background: #fff; border-color: #e0e0f0; }
-  body.light .settings-item { border-color: #f0f0f8; }
-  body.light .settings-label { color: #111; }
-  body.light .app-item { border-color: #e8e8f8; }
-  body.light .app-name { color: #111; }
-  body.light .app-desc { color: #888; }
-  body.light .bottom-nav { background: rgba(255,255,255,0.97); border-color: #e0e0f0; }
-  body.light .nav-btn i, body.light .nav-btn span { color: #bbb; }
-  body.light .nav-btn.active i, body.light .nav-btn.active span { color: #7c5ef6; }
-  body.light .modal { background: #fff; border-color: #e0e0f0; }
-  body.light .modal-title { color: #111; }
-  body.light .info-sheet { background: #fff; border-color: #e0e0f0; }
-  body.light .info-header-name { color: #111; }
-  body.light .info-text { color: #555; }
-  body.light .info-meta-chip { background: #f0f0f8; border-color: #e0e0f0; }
-  body.light .profile-card { background: linear-gradient(135deg,#e8e0ff,#d0e8ff); border-color: #c0b0f0; }
-  body.light .profile-name { color: #111; }
-  body.light .section-title { color: #111; }
-  body.light .logo-name { background: linear-gradient(135deg, #7c5ef6, #3b9eff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 10px; }
-  .logo { display: flex; align-items: center; gap: 8px; }
-  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c5ef6, #3b9eff); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .logo-name { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .search-bar { display: flex; align-items: center; background: #1a1a2e; border: 1px solid #2a2a45; border-radius: 20px; padding: 6px 14px; gap: 8px; }
-  .search-bar input { background: none; border: none; outline: none; color: #fff; font-size: 13px; width: 130px; }
-  .search-bar input::placeholder { color: #555; }
-
-  .content { flex: 1; overflow-y: auto; padding: 0 16px 80px; scrollbar-width: none; }
-  .content::-webkit-scrollbar { display: none; }
-  .page { display: none; }
-  .page.active { display: block; }
-
-  .section-title { font-size: 15px; font-weight: 700; margin: 18px 0 12px; }
-
-  /* NEWS */
-  .news-card { border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer; border: 1px solid #1e1e3a; display: flex; gap: 14px; align-items: center; transition: transform 0.15s; }
-  .news-card:active { transform: scale(0.98); }
-  .news-card-icon { font-size: 38px; flex-shrink: 0; width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-  .news-card-body { flex: 1; }
-  .news-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-bottom: 5px; }
-  .news-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
-  .news-desc { font-size: 12px; color: #666; line-height: 1.4; }
-  .news-date { font-size: 10px; color: #444; margin-top: 6px; }
-  .news-arrow { font-size: 18px; color: #333; flex-shrink: 0; }
-
-  /* APP ITEM */
-  .app-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #15152a; }
-  .app-item:last-child { border-bottom: none; }
-  .app-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; cursor: pointer; }
-  .app-info { flex: 1; cursor: pointer; }
-  .app-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
-  .app-desc { font-size: 12px; color: #666; margin-bottom: 3px; }
-  .app-rating { font-size: 11px; color: #f59e0b; }
-  .dl-btn { background: linear-gradient(135deg, #16a34a, #15803d); border: none; color: #fff; font-size: 13px; font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: transform 0.1s; }
-  .dl-btn:active { transform: scale(0.93); }
-
-  /* SETTINGS */
-  .settings-section { background: #13132a; border: 1px solid #1e1e3a; border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
-  .settings-header { padding: 12px 16px; font-size: 11px; font-weight: 700; color: #7c5ef6; letter-spacing: 0.8px; text-transform: uppercase; border-bottom: 1px solid #1e1e3a; }
-  .settings-item { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid #0f0f20; cursor: pointer; transition: background 0.15s; }
-  .settings-item:last-child { border-bottom: none; }
-  .settings-item:hover { background: rgba(255,255,255,0.03); }
-  .settings-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .settings-label { flex: 1; font-size: 14px; }
-  .settings-value { font-size: 12px; color: #555; }
-  .toggle { width: 36px; height: 20px; background: #7c5ef6; border-radius: 20px; position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
-  .toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: #fff; border-radius: 50%; top: 2px; right: 2px; transition: right 0.2s; }
-  .toggle.off { background: #2a2a45; }
-  .toggle.off::after { right: 18px; }
-
-  /* PROFILE */
-  .profile-card { background: linear-gradient(135deg, #1e1060 0%, #0d1f5c 100%); border-radius: 16px; padding: 20px; margin: 10px 0 16px; display: flex; align-items: center; gap: 16px; border: 1px solid #2a1f80; }
-  .profile-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #7c5ef6, #3b9eff); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0; }
-  .profile-name { font-size: 18px; font-weight: 700; }
-  .profile-email { font-size: 12px; color: #7788aa; margin-top: 2px; }
-
-  /* LAUNCH MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: #13132a; border: 1px solid #2a2a50; border-radius: 20px; padding: 28px 24px; width: 300px; text-align: center; }
-  .modal-icon { font-size: 52px; margin-bottom: 10px; }
-  .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
-  .modal-sub { font-size: 13px; color: #666; margin-bottom: 24px; line-height: 1.5; }
-  .modal-go { display: block; width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); border: none; color: #fff; font-size: 15px; font-weight: 700; padding: 13px; border-radius: 14px; cursor: pointer; margin-bottom: 10px; transition: transform 0.1s; }
-  .modal-go:active { transform: scale(0.96); }
-  .modal-cancel { display: block; width: 100%; background: none; border: 1px solid #2a2a50; color: #666; font-size: 14px; padding: 11px; border-radius: 14px; cursor: pointer; }
-
-  /* INFO SHEET */
-  .info-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: flex-end; justify-content: center; }
-  .info-overlay.open { display: flex; }
-  .info-sheet { background: #0f0f20; border: 1px solid #1e1e3a; border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; display: flex; flex-direction: column; }
-  .info-handle { width: 40px; height: 4px; background: #2a2a45; border-radius: 4px; margin: 12px auto 0; flex-shrink: 0; }
-  .info-header { padding: 20px 20px 0; flex-shrink: 0; }
-  .info-header-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-  .info-header-icon { font-size: 42px; width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .info-header-name { font-size: 20px; font-weight: 800; }
-  .info-header-dev { font-size: 12px; color: #666; margin-top: 3px; }
-  .info-header-rating { font-size: 12px; color: #f59e0b; margin-top: 3px; }
-  .info-body { overflow-y: auto; padding: 0 20px 20px; flex: 1; scrollbar-width: none; }
-  .info-body::-webkit-scrollbar { display: none; }
-  .info-meta-row { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
-  .info-meta-chip { background: #13132a; border: 1px solid #1e1e3a; border-radius: 10px; padding: 8px 14px; font-size: 12px; text-align: center; flex: 1; min-width: 80px; }
-  .info-meta-chip .chip-label { color: #555; font-size: 10px; margin-bottom: 3px; }
-  .info-meta-chip .chip-val { font-weight: 700; color: #a78bfa; }
-  .info-section-title { font-size: 13px; font-weight: 700; color: #7c5ef6; text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; }
-  .info-text { font-size: 13px; color: #8888aa; line-height: 1.7; }
-  .info-tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 4px; }
-  .info-tag { background: rgba(124,94,246,0.15); border: 1px solid rgba(124,94,246,0.3); color: #a78bfa; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 8px; }
-  .info-warn { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #fbbf24; margin: 10px 0; display: flex; align-items: center; gap: 8px; }
-  .info-footer { padding: 14px 20px 20px; border-top: 1px solid #1a1a2e; display: flex; gap: 10px; flex-shrink: 0; }
-  .info-footer-btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; border: 1px solid #2a2a50; background: none; color: #777; transition: background 0.15s; }
-  .info-footer-btn:hover { background: #1a1a2e; }
-
-  /* LANG MODAL */
-  .lang-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; align-items: center; justify-content: center; }
-  .lang-overlay.open { display: flex; }
-  .lang-box { background: #13132a; border: 1px solid #2a2a50; border-radius: 20px; padding: 24px; width: 280px; }
-  .lang-title { font-size: 17px; font-weight: 800; margin-bottom: 16px; text-align: center; }
-  .lang-opt { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; cursor: pointer; transition: background 0.15s; margin-bottom: 6px; font-size: 14px; border: 1px solid transparent; }
-  .lang-opt:hover { background: #1e1e3a; }
-  .lang-opt.selected { background: rgba(124,94,246,0.15); border-color: #7c5ef6; color: #a78bfa; font-weight: 700; }
-  .lang-check { font-size: 16px; }
-
-  /* TOAST */
-  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(12px); background: #1e1e3a; border: 1px solid #7c5ef6; color: #a78bfa; padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap; pointer-events: none; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* BOTTOM NAV */
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,20,0.97); backdrop-filter: blur(16px); border-top: 1px solid #1a1a2e; display: flex; }
-  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0 12px; cursor: pointer; gap: 4px; border: none; background: none; transition: all 0.15s; }
-  .nav-btn i { font-size: 22px; color: #444; transition: color 0.15s; }
-  .nav-btn span { font-size: 10px; color: #444; font-weight: 500; transition: color 0.15s; }
-  .nav-btn.active i, .nav-btn.active span { color: #a78bfa; }
-  .nav-indicator { width: 28px; height: 2px; border-radius: 2px; background: #7c5ef6; opacity: 0; transition: opacity 0.15s; margin-bottom: 2px; }
-  .nav-btn.active .nav-indicator { opacity: 1; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统错误</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #0044ff; /* 蓝色背景 */
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .system-status {
+            color: #ff3333; /* 红色警告文本 */
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .error-log {
+            background-color: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid #ff3333;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: left;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        .error-line {
+            color: #ff6666;
+            margin-bottom: 8px;
+        }
+        .error-line:last-child {
+            margin-bottom: 0;
+        }
+        .action-btn {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #0044ff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            border: none;
+            font-size: 1rem;
+        }
+        .action-btn:hover {
+            background-color: #f0f0f0;
+        }
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* 弹窗样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            color: #333333;
+            padding: 25px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            text-align: left;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-title {
+            color: #0044ff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+        .modal-details ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        .modal-details li {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .close-btn {
+            background-color: #0044ff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            float: right;
+            margin-top: 15px;
+        }
+        .close-btn:hover {
+            background-color: #0033cc;
+        }
+    </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="logo">
-    <div class="logo-icon">🪐</div>
-    <div class="logo-name" id="logo-text">Kepler Market</div>
-  </div>
-  <div class="search-bar">
-    <i class="ti ti-search" style="color:#555;font-size:14px"></i>
-    <input type="text" id="search-input" placeholder="Поиск...">
-  </div>
-</div>
-
-<div class="content">
-
-  <!-- MENU -->
-  <div class="page active" id="page-menu">
-    <div class="section-title" id="lbl-news" style="margin-top:10px">📰 Новости</div>
-
-    <div class="news-card" style="background:linear-gradient(135deg,#0d2a1a,#0a1a10)" onclick="snd('open');openInfo('diamond')">
-      <div class="news-card-icon" style="background:linear-gradient(135deg,#0d3320,#0a5c30)">💎</div>
-      <div class="news-card-body">
-        <span class="news-tag" style="background:rgba(22,163,74,0.2);color:#4ade80;border:1px solid rgba(22,163,74,0.3)" data-i18n="tag-game">🎮 ИГРА</span>
-        <div class="news-title" data-i18n="news1-title">Diamond Clicker — теперь в Kepler!</div>
-        <div class="news-desc" data-i18n="news1-desc">Новый кликер с алмазами доступен для всех. Собирай, улучшай, побеждай.</div>
-        <div class="news-date">13 июля 2026</div>
-      </div>
-      <div class="news-arrow">›</div>
-    </div>
-
-    <div class="news-card" style="background:linear-gradient(135deg,#0a2018,#061a12)" onclick="snd('open');openInfo('mint')">
-      <div class="news-card-icon" style="background:linear-gradient(135deg,#064e3b,#065f46)">💬</div>
-      <div class="news-card-body">
-        <span class="news-tag" style="background:rgba(59,158,255,0.2);color:#60a5fa;border:1px solid rgba(59,158,255,0.3)" data-i18n="tag-app">📱 ПРИЛОЖЕНИЕ</span>
-        <div class="news-title" data-i18n="news2-title">Mint Chat Messenger — общайся без границ</div>
-        <div class="news-desc" data-i18n="news2-desc">Быстрый и удобный мессенджер уже в маркете. Попробуй прямо сейчас.</div>
-        <div class="news-date">13 июля 2026</div>
-      </div>
-      <div class="news-arrow">›</div>
-    </div>
-
-    <div class="news-card" style="background:linear-gradient(135deg,#0d1a2e,#091020)" onclick="snd('open');openInfo('shop')">
-      <div class="news-card-icon" style="background:linear-gradient(135deg,#1a3a6a,#0d2a5c)">🛒</div>
-      <div class="news-card-body">
-        <span class="news-tag" style="background:rgba(124,94,246,0.2);color:#a78bfa;border:1px solid rgba(124,94,246,0.3)" data-i18n="tag-app">📱 ПРИЛОЖЕНИЕ</span>
-        <div class="news-title" data-i18n="news3-title">Clicker Shop — магазин для геймеров</div>
-        <div class="news-desc" data-i18n="news3-desc">Покупай улучшения, предметы и многое другое для твоих кликеров.</div>
-        <div class="news-date">13 июля 2026</div>
-      </div>
-      <div class="news-arrow">›</div>
-    </div>
-  </div>
-
-  <!-- GAMES -->
-  <div class="page" id="page-games">
-    <div class="section-title" id="lbl-games" style="margin-top:14px">🎮 Игры</div>
-    <div class="app-item">
-      <div class="app-icon" style="background:linear-gradient(135deg,#0d3320,#0a5c30)" onclick="snd('open');openInfo('diamond')">💎</div>
-      <div class="app-info" onclick="snd('open');openInfo('diamond')">
-        <div class="app-name">Diamond Clicker</div>
-        <div class="app-desc" data-i18n="dc-desc">Кликай и собирай алмазы!</div>
-        <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
-      </div>
-      <button class="dl-btn" onclick="snd('download');openLaunch('diamond')" data-i18n="btn-dl">Скачать</button>
-    </div>
-  </div>
-
-  <!-- APPS -->
-  <div class="page" id="page-apps">
-    <div class="section-title" id="lbl-apps" style="margin-top:14px">📱 Приложения</div>
-    <div class="app-item">
-      <div class="app-icon" style="background:linear-gradient(135deg,#064e3b,#065f46);cursor:pointer" onclick="snd('open');openInfo('mint')">💬</div>
-      <div class="app-info" onclick="snd('open');openInfo('mint')">
-        <div class="app-name">Mint Chat Messenger</div>
-        <div class="app-desc" data-i18n="mint-desc">Быстрый и удобный мессенджер</div>
-        <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
-      </div>
-      <button class="dl-btn" onclick="snd('download');openLaunch('mint')" data-i18n="btn-dl">Скачать</button>
-    </div>
-    <div class="app-item">
-      <div class="app-icon" style="background:linear-gradient(135deg,#1a3a6a,#0d2a5c);cursor:pointer" onclick="snd('open');openInfo('shop')">🛒</div>
-      <div class="app-info" onclick="snd('open');openInfo('shop')">
-        <div class="app-name">Clicker Shop</div>
-        <div class="app-desc" data-i18n="shop-desc">Магазин для кликеров и не только</div>
-        <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
-      </div>
-      <button class="dl-btn" onclick="snd('download');openLaunch('shop')" data-i18n="btn-dl">Скачать</button>
-    </div>
-  </div>
-
-  <!-- SETTINGS -->
-  <div class="page" id="page-settings">
-    <div class="profile-card">
-      <div class="profile-avatar">👤</div>
-      <div>
-        <div class="profile-name" data-i18n="user">Пользователь</div>
-        <div class="profile-email">user@kepler.market</div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-header" data-i18n="s-app">Приложение</div>
-
-      <div class="settings-item" onclick="toggleNotif(this)">
-        <div class="settings-icon" style="background:rgba(245,158,11,0.15)">🔔</div>
-        <div class="settings-label" data-i18n="s-notif">Уведомления</div>
-        <div class="toggle off" id="tog-notif"></div>
-      </div>
-
-      <div class="settings-item" onclick="toggleTheme(this)">
-        <div class="settings-icon" style="background:rgba(99,102,241,0.15)" id="theme-icon">🌙</div>
-        <div class="settings-label" data-i18n="s-theme">Тёмная тема</div>
-        <div class="toggle" id="tog-theme"></div>
-      </div>
-
-      <div class="settings-item" onclick="toggleUpdate(this)">
-        <div class="settings-icon" style="background:rgba(16,185,129,0.15)">⬇️</div>
-        <div class="settings-label" data-i18n="s-update">Авто-обновления</div>
-        <div class="toggle off" id="tog-update"></div>
-      </div>
-
-      <div class="settings-item" onclick="snd('click');toggleSound()">
-        <div class="settings-icon" style="background:rgba(124,94,246,0.15)">🔊</div>
-        <div class="settings-label" data-i18n="s-sound">Звуки интерфейса</div>
-        <div class="toggle" id="tog-sound"></div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-header" data-i18n="s-system">Система</div>
-      <div class="settings-item" onclick="snd('click');openLangModal()">
-        <div class="settings-icon" style="background:rgba(59,158,255,0.15)">🌐</div>
-        <div class="settings-label" data-i18n="s-lang">Язык</div>
-        <span class="settings-value" id="lang-value">Русский</span>
-      </div>
-      <div class="settings-item">
-        <div class="settings-icon" style="background:rgba(124,94,246,0.15)">🪐</div>
-        <div class="settings-label" data-i18n="s-ver">Версия</div>
-        <span class="settings-value">1.0.0</span>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- LAUNCH MODALS -->
-<div class="modal-overlay" id="launch-diamond">
-  <div class="modal">
-    <div class="modal-icon">💎</div>
-    <div class="modal-title">Diamond Clicker</div>
-    <div class="modal-sub" data-i18n="launch-game-sub">Игра готова к запуску!<br>Нажми кнопку, чтобы перейти.</div>
-    <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/Diamond-clicker-/','_blank');closeLaunch('diamond')" data-i18n="btn-play">▶ Играть</button>
-    <button class="modal-cancel" onclick="snd('click');closeLaunch('diamond')" data-i18n="btn-cancel">Отмена</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="launch-mint">
-  <div class="modal">
-    <div class="modal-icon">💬</div>
-    <div class="modal-title">Mint Chat Messenger</div>
-    <div class="modal-sub" data-i18n="launch-app-sub">Приложение готово к работе!<br>Нажми кнопку, чтобы открыть.</div>
-    <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/Mint-chat/','_blank');closeLaunch('mint')" data-i18n="btn-use">▶ Пользоваться</button>
-    <button class="modal-cancel" onclick="snd('click');closeLaunch('mint')" data-i18n="btn-cancel">Отмена</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="launch-shop">
-  <div class="modal">
-    <div class="modal-icon">🛒</div>
-    <div class="modal-title">Clicker Shop</div>
-    <div class="modal-sub" data-i18n="launch-app-sub">Приложение готово к работе!<br>Нажми кнопку, чтобы открыть.</div>
-    <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/Shop/','_blank');closeLaunch('shop')" data-i18n="btn-use">▶ Пользоваться</button>
-    <button class="modal-cancel" onclick="snd('click');closeLaunch('shop')" data-i18n="btn-cancel">Отмена</button>
-  </div>
-</div>
-
-<!-- INFO SHEET -->
-<div class="info-overlay" id="info-overlay" onclick="closeInfoIfBg(event)">
-  <div class="info-sheet" id="info-sheet">
-    <div class="info-handle"></div>
-    <div class="info-header">
-      <div class="info-header-top">
-        <div class="info-header-icon" id="info-icon"></div>
-        <div>
-          <div class="info-header-name" id="info-name"></div>
-          <div class="info-header-dev" id="info-dev"></div>
-          <div class="info-header-rating" id="info-rating"></div>
+    <div class="container">
+        <div class="system-status">
+            系统已损坏且出现故障，目前正在进行技术维护。
         </div>
-      </div>
+
+        <div class="error-log">
+            <div class="error-line">Error:Syntax error</div>
+            <div class="error-line">Error:System error</div>
+            <div class="error-line">Error:Firebase is not defined</div>
+        </div>
+
+        <button class="action-btn" id="explainBtn">为什么会这样？</button>
     </div>
-    <div class="info-body">
-      <div class="info-meta-row">
-        <div class="info-meta-chip"><div class="chip-label" data-i18n="chip-upd">Обновление</div><div class="chip-val">13 июл 2026</div></div>
-        <div class="info-meta-chip"><div class="chip-label" data-i18n="chip-ver">Версия</div><div class="chip-val">online</div></div>
-        <div class="info-meta-chip"><div class="chip-label" data-i18n="chip-age">Возраст</div><div class="chip-val" id="info-age">6+</div></div>
-      </div>
-      <div class="info-warn">⚠️ <span data-i18n="warn-paid">Есть платный контент внутри приложения</span></div>
-      <div class="info-warn" style="background:rgba(59,158,255,0.08);border-color:rgba(59,158,255,0.25);color:#60a5fa;">🗑️ <span data-i18n="warn-data">Вы можете запросить удаление своих данных</span></div>
-      <div class="info-section-title" data-i18n="info-about-title">Об приложении</div>
-      <div class="info-text" id="info-about"></div>
-      <div class="info-section-title" data-i18n="info-feat">Особенности</div>
-      <div class="info-tag-row" id="info-tags"></div>
-      <div class="info-section-title" data-i18n="info-new">Что нового</div>
-      <div class="info-text" id="info-whatsnew"></div>
-      <div class="info-section-title" data-i18n="info-dev">Разработчик</div>
-      <div class="info-text" id="info-devinfo"></div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-title">系统故障说明</div>
+            <div class="modal-details">
+                <p>导致系统崩溃的关键技术原因如下：</p>
+                <ul>
+                    <li><strong>Syntax error (语法错误):</strong> 应用程序源码中存在语法错误，导致系统无法正常解析并读取。</li>
+                    <li><strong>System error (系统错误):</strong> 运行环境发生内部错误，或服务器配置文件遭到损坏。</li>
+                    <li><strong>Firebase is not defined (Firebase未定义):</strong> 核心数据库 Firebase 脚本未能成功加载，或者在初始化之前就被提前调用。</li>
+                </ul>
+            </div>
+            <button class="close-btn" id="closeBtn">关闭</button>
+            <div style="clear: both;"></div>
+        </div>
     </div>
-    <div class="info-footer">
-      <button class="info-footer-btn" onclick="snd('click');showPolicy()" data-i18n="btn-privacy">🔒 Политика конфиденциальности</button>
-      <button class="info-footer-btn" onclick="snd('click');showTerms()" data-i18n="btn-terms">📋 Правила использования</button>
-    </div>
-  </div>
-</div>
 
-<!-- LANG MODAL -->
-<div class="lang-overlay" id="lang-overlay" onclick="closeLangIfBg(event)">
-  <div class="lang-box">
-    <div class="lang-title" data-i18n="choose-lang">Выберите язык</div>
-    <div class="lang-opt selected" id="lang-ru" onclick="setLang('ru')">🇷🇺 Русский <span class="lang-check">✓</span></div>
-    <div class="lang-opt" id="lang-en" onclick="setLang('en')">🇬🇧 English <span class="lang-check" style="opacity:0">✓</span></div>
-    <div class="lang-opt" id="lang-de" onclick="setLang('de')">🇩🇪 Deutsch <span class="lang-check" style="opacity:0">✓</span></div>
-    <div class="lang-opt" id="lang-uz" onclick="setLang('uz')">🇺🇿 O'zbek <span class="lang-check" style="opacity:0">✓</span></div>
-  </div>
-</div>
+    <script>
+        const explainBtn = document.getElementById('explainBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeBtn = document.getElementById('closeBtn');
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+        // 打开弹窗
+        explainBtn.addEventListener('click', () => {
+            modalOverlay.style.display = 'flex';
+        });
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="nav-btn active" id="nav-menu" onclick="snd('nav');showPage('menu')">
-    <div class="nav-indicator"></div>
-    <i class="ti ti-home"></i>
-    <span data-i18n="nav-menu">Меню</span>
-  </button>
-  <button class="nav-btn" id="nav-games" onclick="snd('nav');showPage('games')">
-    <div class="nav-indicator"></div>
-    <i class="ti ti-device-gamepad-2"></i>
-    <span data-i18n="nav-games">Игры</span>
-  </button>
-  <button class="nav-btn" id="nav-apps" onclick="snd('nav');showPage('apps')">
-    <div class="nav-indicator"></div>
-    <i class="ti ti-apps"></i>
-    <span data-i18n="nav-apps">Приложения</span>
-  </button>
-  <button class="nav-btn" id="nav-settings" onclick="snd('nav');showPage('settings')">
-    <div class="nav-indicator"></div>
-    <i class="ti ti-settings"></i>
-    <span data-i18n="nav-settings">Настройки</span>
-  </button>
-</div>
+        // 关闭弹窗
+        closeBtn.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+        });
 
-<script>
-// ===================== AUDIO =====================
-const AC = new (window.AudioContext || window.webkitAudioContext)();
-let soundEnabled = true;
-
-function snd(type) {
-  if (!soundEnabled) return;
-  try {
-    const now = AC.currentTime;
-    const g = AC.createGain();
-    g.connect(AC.destination);
-
-    if (type === 'nav') {
-      // мягкий щелчок навигации
-      const o = AC.createOscillator();
-      o.connect(g);
-      o.type = 'sine';
-      o.frequency.setValueAtTime(520, now);
-      o.frequency.exponentialRampToValueAtTime(620, now + 0.07);
-      g.gain.setValueAtTime(0.18, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-      o.start(now); o.stop(now + 0.12);
-    } else if (type === 'click') {
-      // короткий тап
-      const o = AC.createOscillator();
-      o.connect(g);
-      o.type = 'sine';
-      o.frequency.setValueAtTime(800, now);
-      o.frequency.exponentialRampToValueAtTime(400, now + 0.05);
-      g.gain.setValueAtTime(0.15, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-      o.start(now); o.stop(now + 0.08);
-    } else if (type === 'open') {
-      // открытие карточки — два тона
-      [440, 660].forEach((freq, i) => {
-        const o = AC.createOscillator();
-        o.connect(g);
-        o.type = 'sine';
-        o.frequency.value = freq;
-        g.gain.setValueAtTime(0.12, now + i*0.06);
-        g.gain.exponentialRampToValueAtTime(0.001, now + i*0.06 + 0.1);
-        o.start(now + i*0.06); o.stop(now + i*0.06 + 0.1);
-      });
-    } else if (type === 'download') {
-      // скачивание — восходящий аккорд
-      [330, 440, 550, 660].forEach((freq, i) => {
-        const o = AC.createOscillator();
-        const gn = AC.createGain();
-        o.connect(gn); gn.connect(AC.destination);
-        o.type = 'sine';
-        o.frequency.value = freq;
-        gn.gain.setValueAtTime(0.1, now + i*0.07);
-        gn.gain.exponentialRampToValueAtTime(0.001, now + i*0.07 + 0.15);
-        o.start(now + i*0.07); o.stop(now + i*0.07 + 0.15);
-      });
-    } else if (type === 'success') {
-      // успех — мелодичный звук
-      [523, 659, 784, 1047].forEach((freq, i) => {
-        const o = AC.createOscillator();
-        const gn = AC.createGain();
-        o.connect(gn); gn.connect(AC.destination);
-        o.type = 'sine';
-        o.frequency.value = freq;
-        gn.gain.setValueAtTime(0.13, now + i*0.1);
-        gn.gain.exponentialRampToValueAtTime(0.001, now + i*0.1 + 0.18);
-        o.start(now + i*0.1); o.stop(now + i*0.1 + 0.18);
-      });
-    } else if (type === 'toggle-on') {
-      const o = AC.createOscillator();
-      o.connect(g); o.type = 'sine';
-      o.frequency.setValueAtTime(400, now);
-      o.frequency.exponentialRampToValueAtTime(700, now + 0.1);
-      g.gain.setValueAtTime(0.15, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-      o.start(now); o.stop(now + 0.15);
-    } else if (type === 'toggle-off') {
-      const o = AC.createOscillator();
-      o.connect(g); o.type = 'sine';
-      o.frequency.setValueAtTime(700, now);
-      o.frequency.exponentialRampToValueAtTime(300, now + 0.1);
-      g.gain.setValueAtTime(0.12, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-      o.start(now); o.stop(now + 0.12);
-    }
-  } catch(e) {}
-}
-
-// ===================== I18N =====================
-const langs = {
-  ru: {
-    'nav-menu':'Меню','nav-games':'Игры','nav-apps':'Приложения','nav-settings':'Настройки',
-    'lbl-news':'📰 Новости','lbl-games':'🎮 Игры','lbl-apps':'📱 Приложения',
-    'tag-game':'🎮 ИГРА','tag-app':'📱 ПРИЛОЖЕНИЕ',
-    'news1-title':'Diamond Clicker — теперь в Kepler!',
-    'news1-desc':'Новый кликер с алмазами доступен для всех. Собирай, улучшай, побеждай.',
-    'news2-title':'Mint Chat Messenger — общайся без границ',
-    'news2-desc':'Быстрый и удобный мессенджер уже в маркете. Попробуй прямо сейчас.',
-    'news3-title':'Clicker Shop — магазин для геймеров',
-    'news3-desc':'Покупай улучшения, предметы и многое другое для твоих кликеров.',
-    'dc-desc':'Кликай и собирай алмазы!','mint-desc':'Быстрый и удобный мессенджер',
-    'shop-desc':'Магазин для кликеров и не только',
-    'free':'Бесплатно','btn-dl':'Скачать','btn-play':'▶ Играть','btn-use':'▶ Пользоваться','btn-cancel':'Отмена',
-    'launch-game-sub':'Игра готова к запуску!<br>Нажми кнопку, чтобы перейти.',
-    'launch-app-sub':'Приложение готово к работе!<br>Нажми кнопку, чтобы открыть.',
-    'user':'Пользователь','s-app':'Приложение','s-notif':'Уведомления','s-theme':'Тёмная тема',
-    's-update':'Авто-обновления','s-sound':'Звуки интерфейса','s-system':'Система',
-    's-lang':'Язык','s-ver':'Версия',
-    'chip-upd':'Обновление','chip-ver':'Версия','chip-age':'Возраст',
-    'warn-paid':'Есть платный контент внутри приложения',
-    'warn-data':'Вы можете запросить удаление своих данных',
-    'info-about-title':'Об приложении','info-feat':'Особенности','info-new':'Что нового','info-dev':'Разработчик',
-    'btn-privacy':'🔒 Политика конфиденциальности','btn-terms':'📋 Правила использования',
-    'choose-lang':'Выберите язык',
-    'toast-notif-on':'Уведомления включены','toast-notif-off':'Уведомления выключены',
-    'toast-update-on':'Авто-обновления включены','toast-update-off':'Авто-обновления выключены',
-    'toast-sound-on':'Звуки включены','toast-sound-off':'Звуки выключены',
-    'toast-theme-light':'Светлая тема включена','toast-theme-dark':'Тёмная тема включена',
-    'lang-name':'Русский',
-    'privacy-text':'Политика конфиденциальности\n\nМы уважаем вашу конфиденциальность. Мы не передаём ваши данные третьим лицам. Все данные хранятся на защищённых серверах. Вы вправе в любой момент запросить удаление своих данных, обратившись к разработчику.',
-    'terms-text':'Правила использования\n\nИспользуя данное приложение, вы соглашаетесь с условиями использования. Запрещается использовать приложение в незаконных целях. Разработчик не несёт ответственности за действия пользователей. Нарушение правил может повлечь блокировку аккаунта.',
-  },
-  en: {
-    'nav-menu':'Menu','nav-games':'Games','nav-apps':'Apps','nav-settings':'Settings',
-    'lbl-news':'📰 News','lbl-games':'🎮 Games','lbl-apps':'📱 Apps',
-    'tag-game':'🎮 GAME','tag-app':'📱 APP',
-    'news1-title':'Diamond Clicker — now on Kepler!',
-    'news1-desc':'A new diamond clicker available for everyone. Collect, upgrade, win.',
-    'news2-title':'Mint Chat Messenger — chat without limits',
-    'news2-desc':'A fast and convenient messenger is now in the market. Try it right now.',
-    'news3-title':'Clicker Shop — shop for gamers',
-    'news3-desc':'Buy upgrades, items and much more for your clickers.',
-    'dc-desc':'Click and collect diamonds!','mint-desc':'Fast and convenient messenger',
-    'shop-desc':'Shop for clickers and more',
-    'free':'Free','btn-dl':'Download','btn-play':'▶ Play','btn-use':'▶ Open','btn-cancel':'Cancel',
-    'launch-game-sub':'Game is ready!<br>Tap the button to launch.',
-    'launch-app-sub':'App is ready!<br>Tap the button to open.',
-    'user':'User','s-app':'App','s-notif':'Notifications','s-theme':'Dark theme',
-    's-update':'Auto-updates','s-sound':'Interface sounds','s-system':'System',
-    's-lang':'Language','s-ver':'Version',
-    'chip-upd':'Updated','chip-ver':'Version','chip-age':'Age',
-    'warn-paid':'Contains in-app purchases',
-    'warn-data':'You can request deletion of your data',
-    'info-about-title':'About','info-feat':'Features','info-new':"What's new",'info-dev':'Developer',
-    'btn-privacy':'🔒 Privacy Policy','btn-terms':'📋 Terms of Use',
-    'choose-lang':'Choose language',
-    'toast-notif-on':'Notifications on','toast-notif-off':'Notifications off',
-    'toast-update-on':'Auto-updates on','toast-update-off':'Auto-updates off',
-    'toast-sound-on':'Sounds on','toast-sound-off':'Sounds off',
-    'toast-theme-light':'Light theme on','toast-theme-dark':'Dark theme on',
-    'lang-name':'English',
-    'privacy-text':'Privacy Policy\n\nWe respect your privacy. We do not share your data with third parties. All data is stored on secure servers. You may request deletion of your data at any time by contacting the developer.',
-    'terms-text':'Terms of Use\n\nBy using this app you agree to the terms of use. It is prohibited to use the app for illegal purposes. The developer is not responsible for user actions. Violation of the rules may result in account blocking.',
-  },
-  de: {
-    'nav-menu':'Menü','nav-games':'Spiele','nav-apps':'Apps','nav-settings':'Einstellungen',
-    'lbl-news':'📰 Neuigkeiten','lbl-games':'🎮 Spiele','lbl-apps':'📱 Apps',
-    'tag-game':'🎮 SPIEL','tag-app':'📱 APP',
-    'news1-title':'Diamond Clicker — jetzt auf Kepler!',
-    'news1-desc':'Ein neuer Diamanten-Clicker für alle. Sammle, verbessere, siege.',
-    'news2-title':'Mint Chat Messenger — chatte ohne Grenzen',
-    'news2-desc':'Ein schneller Messenger ist jetzt im Markt. Probier es jetzt aus.',
-    'news3-title':'Clicker Shop — Shop für Gamer',
-    'news3-desc':'Kaufe Upgrades und Gegenstände für deine Clicker.',
-    'dc-desc':'Klicke und sammle Diamanten!','mint-desc':'Schneller und bequemer Messenger',
-    'shop-desc':'Shop für Clicker und mehr',
-    'free':'Kostenlos','btn-dl':'Herunterladen','btn-play':'▶ Spielen','btn-use':'▶ Öffnen','btn-cancel':'Abbrechen',
-    'launch-game-sub':'Spiel ist bereit!<br>Tippe die Schaltfläche, um zu starten.',
-    'launch-app-sub':'App ist bereit!<br>Tippe die Schaltfläche, um zu öffnen.',
-    'user':'Benutzer','s-app':'App','s-notif':'Benachrichtigungen','s-theme':'Dunkles Design',
-    's-update':'Auto-Updates','s-sound':'Interface-Sounds','s-system':'System',
-    's-lang':'Sprache','s-ver':'Version',
-    'chip-upd':'Aktualisiert','chip-ver':'Version','chip-age':'Alter',
-    'warn-paid':'Enthält In-App-Käufe',
-    'warn-data':'Sie können die Löschung Ihrer Daten anfordern',
-    'info-about-title':'Über','info-feat':'Funktionen','info-new':'Was ist neu','info-dev':'Entwickler',
-    'btn-privacy':'🔒 Datenschutz','btn-terms':'📋 Nutzungsbedingungen',
-    'choose-lang':'Sprache wählen',
-    'toast-notif-on':'Benachrichtigungen an','toast-notif-off':'Benachrichtigungen aus',
-    'toast-update-on':'Auto-Updates an','toast-update-off':'Auto-Updates aus',
-    'toast-sound-on':'Sounds an','toast-sound-off':'Sounds aus',
-    'toast-theme-light':'Helles Design aktiviert','toast-theme-dark':'Dunkles Design aktiviert',
-    'lang-name':'Deutsch',
-    'privacy-text':'Datenschutzerklärung\n\nWir respektieren Ihre Privatsphäre. Ihre Daten werden nicht an Dritte weitergegeben. Alle Daten werden auf sicheren Servern gespeichert.',
-    'terms-text':'Nutzungsbedingungen\n\nDurch die Nutzung dieser App stimmen Sie den Bedingungen zu. Die App darf nicht für illegale Zwecke genutzt werden.',
-  },
-  uz: {
-    'nav-menu':'Menyu','nav-games':'O\'yinlar','nav-apps':'Ilovalar','nav-settings':'Sozlamalar',
-    'lbl-news':'📰 Yangiliklar','lbl-games':'🎮 O\'yinlar','lbl-apps':'📱 Ilovalar',
-    'tag-game':'🎮 O\'YIN','tag-app':'📱 ILOVA',
-    'news1-title':'Diamond Clicker — endi Keplerda!',
-    'news1-desc':'Yangi olmos bosuvchi o\'yin hammaga ochiq. Yig\', yaxshila, g\'alaba qozon.',
-    'news2-title':'Mint Chat Messenger — chegarasiz muloqot',
-    'news2-desc':'Tez va qulay messenjer bozorda. Hoziroq sinab ko\'ring.',
-    'news3-title':'Clicker Shop — geymerlar uchun do\'kon',
-    'news3-desc':'Klikkerlaringiz uchun yaxshilanishlar va narsalar sotib oling.',
-    'dc-desc':'Bosing va olmoslar yig\'ing!','mint-desc':'Tez va qulay messenjer',
-    'shop-desc':'Klikkerlar va boshqalar uchun do\'kon',
-    'free':'Bepul','btn-dl':'Yuklab olish','btn-play':'▶ O\'ynash','btn-use':'▶ Ochish','btn-cancel':'Bekor qilish',
-    'launch-game-sub':'O\'yin tayyor!<br>Boshlash uchun tugmani bosing.',
-    'launch-app-sub':'Ilova tayyor!<br>Ochish uchun tugmani bosing.',
-    'user':'Foydalanuvchi','s-app':'Ilova','s-notif':'Bildirishnomalar','s-theme':'Qorong\'u mavzu',
-    's-update':'Avtomatik yangilanishlar','s-sound':'Interfeys tovushlari','s-system':'Tizim',
-    's-lang':'Til','s-ver':'Versiya',
-    'chip-upd':'Yangilangan','chip-ver':'Versiya','chip-age':'Yosh',
-    'warn-paid':'Ichki xaridlar mavjud',
-    'warn-data':'Ma\'lumotlaringizni o\'chirishni so\'rashingiz mumkin',
-    'info-about-title':'Ilova haqida','info-feat':'Xususiyatlar','info-new':'Yangiliklar','info-dev':'Ishlab chiqaruvchi',
-    'btn-privacy':'🔒 Maxfiylik siyosati','btn-terms':'📋 Foydalanish shartlari',
-    'choose-lang':'Tilni tanlang',
-    'toast-notif-on':'Bildirishnomalar yoqildi','toast-notif-off':'Bildirishnomalar o\'chirildi',
-    'toast-update-on':'Avto-yangilash yoqildi','toast-update-off':'Avto-yangilash o\'chirildi',
-    'toast-sound-on':'Tovushlar yoqildi','toast-sound-off':'Tovushlar o\'chirildi',
-    'toast-theme-light':'Yorug\' mavzu yoqildi','toast-theme-dark':'Qorong\'u mavzu yoqildi',
-    'lang-name':'O\'zbek',
-    'privacy-text':'Maxfiylik siyosati\n\nBiz sizning maxfiyligingizni hurmat qilamiz. Ma\'lumotlaringiz uchinchi tomonlarga berilmaydi.',
-    'terms-text':'Foydalanish shartlari\n\nBu ilovadan foydalanib, siz shartlarga rozisiz. Ilovani noqonuniy maqsadlarda ishlatish taqiqlanadi.',
-  }
-};
-
-let curLang = 'ru';
-
-function t(key) { return langs[curLang][key] || langs['ru'][key] || key; }
-
-function applyLang() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    const val = t(key);
-    if (el.tagName === 'INPUT') el.placeholder = val;
-    else el.innerHTML = val;
-  });
-  document.getElementById('lbl-news').textContent = t('lbl-news');
-  document.getElementById('lbl-games').textContent = t('lbl-games');
-  document.getElementById('lbl-apps').textContent = t('lbl-apps');
-  document.getElementById('lang-value').textContent = t('lang-name');
-  document.getElementById('search-input').placeholder = curLang === 'ru' ? 'Поиск...' : curLang === 'en' ? 'Search...' : curLang === 'de' ? 'Suchen...' : 'Qidirish...';
-}
-
-function setLang(l) {
-  snd('toggle-on');
-  curLang = l;
-  ['ru','en','de','uz'].forEach(id => {
-    const el = document.getElementById('lang-'+id);
-    const check = el.querySelector('.lang-check');
-    if (id === l) { el.classList.add('selected'); check.style.opacity='1'; }
-    else { el.classList.remove('selected'); check.style.opacity='0'; }
-  });
-  applyLang();
-  closeLangModal();
-  showToast(t('lang-name') + ' ✓');
-}
-
-function openLangModal() { document.getElementById('lang-overlay').classList.add('open'); }
-function closeLangModal() { document.getElementById('lang-overlay').classList.remove('open'); }
-function closeLangIfBg(e) { if (e.target === document.getElementById('lang-overlay')) { snd('click'); closeLangModal(); } }
-
-// ===================== SETTINGS =====================
-let isDark = true;
-
-function toggleTheme() {
-  isDark = !isDark;
-  const tog = document.getElementById('tog-theme');
-  const icon = document.getElementById('theme-icon');
-  if (isDark) {
-    tog.classList.remove('off');
-    icon.textContent = '🌙';
-    document.body.classList.remove('light');
-    snd('toggle-on');
-    showToast(t('toast-theme-dark'));
-  } else {
-    tog.classList.add('off');
-    icon.textContent = '☀️';
-    document.body.classList.add('light');
-    snd('toggle-off');
-    showToast(t('toast-theme-light'));
-  }
-}
-
-function toggleNotif() {
-  const tog = document.getElementById('tog-notif');
-  const on = tog.classList.contains('off');
-  tog.classList.toggle('off');
-  snd(on ? 'toggle-on' : 'toggle-off');
-  showToast(on ? t('toast-notif-on') : t('toast-notif-off'));
-}
-
-function toggleUpdate() {
-  const tog = document.getElementById('tog-update');
-  const on = tog.classList.contains('off');
-  tog.classList.toggle('off');
-  snd(on ? 'toggle-on' : 'toggle-off');
-  showToast(on ? t('toast-update-on') : t('toast-update-off'));
-}
-
-function toggleSound() {
-  soundEnabled = !soundEnabled;
-  const tog = document.getElementById('tog-sound');
-  tog.classList.toggle('off', !soundEnabled);
-  if (soundEnabled) snd('toggle-on');
-  showToast(soundEnabled ? t('toast-sound-on') : t('toast-sound-off'));
-}
-
-// ===================== TOAST =====================
-let toastTimer;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
-}
-
-// ===================== APP DATA =====================
-const appData = {
-  diamond: {
-    icon:'💎', iconBg:'linear-gradient(135deg,#0d3320,#0a5c30)',
-    name:'Diamond Clicker', dev:'Ruslan1055', age:'6+',
-    about:'Diamond Clicker — захватывающая кликер-игра, в которой ты добываешь драгоценные алмазы простым нажатием. Чем больше кликаешь — тем мощнее становится твой инструмент. Открывай новые уровни, прокачивай шахту, собирай редкие кристаллы и соревнуйся с другими игроками. Игра работает полностью онлайн.',
-    tags:['Кликер','Онлайн','Бесплатно','Без рекламы','Улучшения','Рекорды'],
-    whatsnew:'Версия от 13 июля 2026: исправлены мелкие ошибки, улучшена производительность, добавлены новые виды алмазов.',
-    devinfo:'Ruslan1055 — независимый разработчик браузерных игр. Поддержка через GitHub. Ответ в течение 24 часов.',
-    launchId:'diamond'
-  },
-  mint: {
-    icon:'💬', iconBg:'linear-gradient(135deg,#064e3b,#065f46)',
-    name:'Mint Chat Messenger', dev:'Ruslan1055', age:'12+',
-    about:'Mint Chat Messenger — современный мессенджер с чистым интерфейсом. Общайся с друзьями в режиме реального времени прямо в браузере. Поддерживает личные чаты, группы и отправку медиафайлов.',
-    tags:['Мессенджер','Онлайн','Чаты','Бесплатно','Браузер','Быстрый'],
-    whatsnew:'Версия от 13 июля 2026: новый дизайн, улучшена стабильность, добавлены эмодзи-реакции.',
-    devinfo:'Ruslan1055 — создаёт лёгкие и быстрые веб-приложения. Mint Chat — альтернатива тяжёлым мессенджерам.',
-    launchId:'mint'
-  },
-  shop: {
-    icon:'🛒', iconBg:'linear-gradient(135deg,#1a3a6a,#0d2a5c)',
-    name:'Clicker Shop', dev:'Ruslan1055', age:'6+',
-    about:'Clicker Shop — специализированный магазин для фанатов кликер-игр. Здесь ты найдёшь улучшения, бустеры, декоративные предметы. Удобный каталог и быстрый поиск. Совместим с Diamond Clicker.',
-    tags:['Магазин','Кликеры','Онлайн','Бустеры','Предметы','Бесплатно'],
-    whatsnew:'Версия от 13 июля 2026: новые категории товаров, улучшен поиск, исправлены ошибки на мобильных.',
-    devinfo:'Ruslan1055 — разработчик игр и веб-приложений. Clicker Shop — единая точка входа для покупок в экосистеме кликеров.',
-    launchId:'shop'
-  }
-};
-
-function openInfo(id) {
-  snd('open');
-  const d = appData[id];
-  document.getElementById('info-icon').textContent = d.icon;
-  document.getElementById('info-icon').style.background = d.iconBg;
-  document.getElementById('info-name').textContent = d.name;
-  document.getElementById('info-dev').textContent = (curLang==='ru'?'Разработчик: ':curLang==='en'?'Developer: ':curLang==='de'?'Entwickler: ':'Ishlab chiqaruvchi: ') + d.dev;
-  document.getElementById('info-rating').textContent = '★★★★★ 5.0 · 13 ' + (curLang==='ru'?'июля':curLang==='en'?'July':curLang==='de'?'Juli':'iyul') + ' 2026';
-  document.getElementById('info-age').textContent = d.age;
-  document.getElementById('info-about').textContent = d.about;
-  document.getElementById('info-whatsnew').textContent = d.whatsnew;
-  document.getElementById('info-devinfo').textContent = d.devinfo;
-  document.getElementById('info-tags').innerHTML = d.tags.map(t=>`<span class="info-tag">${t}</span>`).join('');
-  document.getElementById('info-overlay').classList.add('open');
-}
-
-function closeInfo() { document.getElementById('info-overlay').classList.remove('open'); }
-function closeInfoIfBg(e) { if (e.target===document.getElementById('info-overlay')) { snd('click'); closeInfo(); } }
-
-function showPolicy() { alert(t('privacy-text')); }
-function showTerms() { alert(t('terms-text')); }
-
-// ===================== LAUNCH =====================
-function openLaunch(id) { document.getElementById('launch-'+id).classList.add('open'); }
-function closeLaunch(id) { document.getElementById('launch-'+id).classList.remove('open'); }
-['diamond','mint','shop'].forEach(id => {
-  document.getElementById('launch-'+id).addEventListener('click', function(e) {
-    if (e.target===this) { snd('click'); closeLaunch(id); }
-  });
-});
-
-// ===================== NAVIGATION =====================
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  document.getElementById('nav-'+name).classList.add('active');
-}
-
-// init
-applyLang();
-</script>
+        // 点击遮罩层关闭弹窗
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
