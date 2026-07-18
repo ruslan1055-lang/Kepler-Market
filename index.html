@@ -226,6 +226,17 @@
       </div>
       <div class="news-arrow">›</div>
     </div>
+
+    <div class="news-card" style="background:linear-gradient(135deg,#1a0a2e,#0d0620)" onclick="snd('open');openInfo('appcraft')">
+      <div class="news-card-icon" style="background:linear-gradient(135deg,#4a1a8a,#2d0d6e)">🛠️</div>
+      <div class="news-card-body">
+        <span class="news-tag" style="background:rgba(167,139,250,0.2);color:#c4b5fd;border:1px solid rgba(167,139,250,0.3)">📱 ПРИЛОЖЕНИЕ</span>
+        <div class="news-title">App Craft — создавай приложения легко!</div>
+        <div class="news-desc">Мощный конструктор приложений прямо в браузере. Твори, собирай, публикуй.</div>
+        <div class="news-date">18 июля 2026</div>
+      </div>
+      <div class="news-arrow">›</div>
+    </div>
   </div>
 
   <!-- GAMES -->
@@ -280,6 +291,15 @@
         <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
       </div>
       <button class="dl-btn" onclick="snd('download');openLaunch('shop')" data-i18n="btn-dl">Скачать</button>
+    </div>
+    <div class="app-item">
+      <div class="app-icon" style="background:linear-gradient(135deg,#4a1a8a,#2d0d6e);cursor:pointer" onclick="snd('open');openInfo('appcraft')">🛠️</div>
+      <div class="app-info" onclick="snd('open');openInfo('appcraft')">
+        <div class="app-name">App Craft</div>
+        <div class="app-desc">Конструктор приложений в браузере</div>
+        <div class="app-rating">★★★★★ 5.0 · <span data-i18n="free">Бесплатно</span></div>
+      </div>
+      <button class="dl-btn" onclick="snd('download');openLaunch('appcraft')" data-i18n="btn-use">▶ Пользоваться</button>
     </div>
   </div>
 
@@ -386,6 +406,16 @@
     <div class="modal-sub" data-i18n="launch-game-sub">Игра готова к запуску!<br>Нажми кнопку, чтобы перейти.</div>
     <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/Check-app/','_blank');closeLaunch('check')" data-i18n="btn-play">▶ Играть</button>
     <button class="modal-cancel" onclick="snd('click');closeLaunch('check')" data-i18n="btn-cancel">Отмена</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="launch-appcraft">
+  <div class="modal">
+    <div class="modal-icon">🛠️</div>
+    <div class="modal-title">App Craft</div>
+    <div class="modal-sub" data-i18n="launch-app-sub">Приложение готово к работе!<br>Нажми кнопку, чтобы открыть.</div>
+    <button class="modal-go" onclick="snd('success');window.open('https://ruslan1055-lang.github.io/App-craft/','_blank');closeLaunch('appcraft')" data-i18n="btn-use">▶ Пользоваться</button>
+    <button class="modal-cancel" onclick="snd('click');closeLaunch('appcraft')" data-i18n="btn-cancel">Отмена</button>
   </div>
 </div>
 
@@ -822,6 +852,15 @@ const appData = {
     whatsnew:'Версия от 14 июля 2026: новые категории вопросов, добавлен режим на время, исправлены ошибки подсчёта очков.',
     devinfo:'Ruslan1055 — создаёт образовательные и развлекательные веб-приложения. Check-app — весело и полезно одновременно.',
     launchId:'check'
+  },
+  appcraft: {
+    icon:'🛠️', iconBg:'linear-gradient(135deg,#4a1a8a,#2d0d6e)',
+    name:'App Craft', dev:'Ruslan1055', age:'6+',
+    about:'App Craft — мощный браузерный конструктор приложений. Создавай собственные веб-приложения без лишних знаний кода — просто собирай нужные блоки, настраивай дизайн и публикуй результат. Идеально для начинающих разработчиков и творческих людей.',
+    tags:['Конструктор','Разработка','Браузер','Бесплатно','Онлайн','Без кода'],
+    whatsnew:'Версия от 18 июля 2026: первый релиз App Craft! Базовый набор блоков, редактор дизайна и быстрая публикация.',
+    devinfo:'Ruslan1055 — создаёт инструменты для веб-разработки и творчества. App Craft — лёгкий старт в мире приложений.',
+    launchId:'appcraft'
   }
 };
 
@@ -850,7 +889,7 @@ function showTerms() { alert(t('terms-text')); }
 // ===================== LAUNCH =====================
 function openLaunch(id) { document.getElementById('launch-'+id).classList.add('open'); }
 function closeLaunch(id) { document.getElementById('launch-'+id).classList.remove('open'); }
-['diamond','mint','shop'].forEach(id => {
+['diamond','mint','shop','appcraft'].forEach(id => {
   document.getElementById('launch-'+id).addEventListener('click', function(e) {
     if (e.target===this) { snd('click'); closeLaunch(id); }
   });
